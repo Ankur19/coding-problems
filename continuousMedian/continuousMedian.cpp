@@ -9,26 +9,65 @@ class Program{
 	public:
 		priority_queue<int> left;
 		priority_queue<int, vector<int>, greater<int>> right;
-		int lSize;
-		int rSize;
+		int count;
+        int lSize = 0;
+        int rSize = 0;
 		Program(){
-			lSize = 0;
-			rSize = 0;
+			count = 0;
+            lSize = 0;
+            rSize = 0;
 		}
 		void insert(int a){
-			if(lSize == rSize ){
-				left.push(a);
-				lSize++;
-			}
-			else{
-				right.push(a);
-				rSize++;
-			}
+            count++;
+            if(count==1 || a <= left.top()){
+                left.push(a);
+                lSize++;
+            }
+            else{
+                right.push(a);
+                rSize++;
+            }
+            if(count%2==0){
+                if(lSize > rSize){
+                    while(lSize>rSize){
+                        right.push(left.top());
+                        left.pop();
+                        lSize--;
+                        rSize++;
+                    }
+                }
+                else{
+                    while(lSize < rSize){
+                        left.push(right.top());
+                        right.pop();
+                        lSize++;
+                        rSize--;
+                    }
+                }
+            }
+            else if(count%2 && count>2){
+                if(lSize>rSize){
+                    while(lSize-1 != rSize){
+                        right.push(left.top());
+                        left.pop();
+                        rSize++;
+                        lSize--;
+                    }
+                }
+                else{
+                    while(rSize-1 != lSize){
+                        left.push(right.top());
+                        right.pop();
+                        rSize--;
+                        lSize++;
+                    }
+                }
+            }
 			return;
 		}
 
 		double getMedian(){
-			if(lSize>rSize)
+			if(count%2)
 				return (double)left.top();
 			return (double)(right.top() + left.top())/2;
 		}
